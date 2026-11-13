@@ -7,6 +7,8 @@ from machine import Pin, PWM
 import cryptolib
 import umqtt.robust as umqtt
 
+timer = machine.Timer()
+
 HOSTNAME = '172.20.10.6'
 PORT = 8080
 TOPIC = 'temp/pico'
@@ -67,4 +69,7 @@ mqtt = umqtt.MQTTClient(
 
 mqtt.connect()
 
-mqtt.publish(TOPIC, str(read_temp()).encode())
+def publishData(t):
+    mqtt.publish(TOPIC, str(read_temp()).encode())
+
+timer.init(freq=0.5, mode=machine.Timer.PERIODIC, callback=publishData)
